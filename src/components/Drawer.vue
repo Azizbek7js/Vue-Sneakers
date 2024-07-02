@@ -2,8 +2,12 @@
 import DrawerHeader from "@/components/DrawerHeader.vue";
 import CardItemList from "@/components/CardItemList.vue";
 defineProps({
-  totalPrice:Number
+  totalPrice:Number,
+  isCreatingOrder:Boolean,
+  cartButtonDisable:Boolean
 })
+const emit = defineEmits(['createOrder'])
+
 </script>
 <template>
   <div class="fixed top-0 left-0 h-full w-full bg-black z-10 opacity-70"></div>
@@ -21,7 +25,10 @@ defineProps({
         <div class="flex-1 border-b border-dashed"></div>
         <b>${{Math.round((totalPrice*0.05))}}</b>
       </div>
-      <button  class="mt-4 transition bg-lime-500 w-full disabled:bg-slate-300 cursor-pointer rounded-xl py-3 text-white hover:bg-lime-600 active:bg-lime-700">buy </button>
+      <button
+          :disabled="cartButtonDisable"
+          @click="()=>emit('createOrder')"
+          class="mt-4 transition bg-lime-500 w-full disabled:bg-slate-300 cursor-pointer rounded-xl py-3 text-white hover:bg-lime-600 active:bg-lime-700">buy </button>
     </div>
 
   </div>

@@ -6,6 +6,7 @@ import CardList from "@/components/CardList.vue";
 import Drawer from "@/components/Drawer.vue";
 const products = ref([])
 const cartItems = ref([])
+const isCreatingOrder = ref(false)
 const favoritesProduct = ref([])
 const filters = reactive({
   sortBy:'',
@@ -60,6 +61,23 @@ const onclickAddCart= (item)=>{
     removeFromCart(item)
   }
 }
+
+const createOrder = async ()=>{
+  try{
+    isCreatingOrder.value = true
+    const { data } = await axios.post(`https://fe22cea9257eefdb.mokky.dev/orders`,{
+      items: cartItems.value,
+      totalPrice: totalPrice.value
+    })
+    cartItems.value = []
+    return data
+  }catch (e){
+    console.log(e)
+  }finally {
+    isCreatingOrder.value = false
+  }
+}
+const cartButtonDisable = computed(()=> isCreatingOrder.value? true : !totalPrice.value)
 
 const openDrawer = () =>{
   drawerOpen.value = true
@@ -120,7 +138,7 @@ provide('cartActions',{
 })
 </script>
 <template>
-  <Drawer  v-if="drawerOpen" :total-price="totalPrice"/>
+  <Drawer  v-if="drawerOpen" :total-price="totalPrice" :cartButtonDisable="cartButtonDisable" @createOrder="createOrder"/>
   <div class="bg-white w-4/5 m-auto rounded-xl shadow-xl mt-14 ">
     <Header :total-price="totalPrice" @openDrawer="openDrawer" />
     <div class="p-10">
